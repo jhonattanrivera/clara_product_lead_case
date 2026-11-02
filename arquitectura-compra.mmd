@@ -1,0 +1,43 @@
+%% Una compra de punta a punta. Tiempos, stand-in y liquidación en USDC son supuestos a validar con el programa.
+sequenceDiagram
+  autonumber
+  participant C as Comercio y adquirente
+  participant N as Red de tarjetas
+  participant P as Issuer processor
+  participant A as Core: autorizador
+  participant L as Core: ledger
+  participant T as Core: tesorería
+  participant S as Partner stablecoin
+  participant B as Entidad emisora
+
+  rect rgb(238, 242, 255)
+    Note over C,L: AUTORIZACIÓN, en tiempo real
+    C->>N: Compra
+    N->>P: Solicitud de autorización
+    P->>A: Webhook: ¿hay saldo disponible?
+    A->>L: Reserva: available a held
+    A-->>P: Aprueba o declina con motivo
+    P-->>N: Respuesta
+    N-->>C: Aprobada o declinada
+    Note over P,A: Sin respuesta a tiempo: regla de stand-in acordada con el processor (supuesto)
+  end
+
+  rect rgb(255, 247, 230)
+    Note over C,L: CLEARING, por lotes y días después
+    C->>N: Presenta el monto final
+    N->>P: Archivo de clearing
+    P->>A: Monto final de cada autorización
+    A->>L: held a por liquidar. Libera lo que sobra o toma la diferencia
+    Note over A,L: Si supera el saldo, el programa cubre y recupera del siguiente pago (supuesto)
+  end
+
+  rect rgb(232, 248, 240)
+    Note over N,B: SETTLEMENT, neto diario
+    P->>T: Total a liquidar
+    T->>S: Off-ramp de USDC a USD (USDC directo si el programa lo permite: supuesto)
+    S->>B: USD a la cuenta de liquidación
+    B->>N: Liquidación neta
+    N->>C: Paga al adquirente, que paga al comercio
+    T->>L: Por liquidar a liquidado
+    Note over L,B: Conciliación: ledger, custodia, archivo del processor y reporte de la red deben cuadrar
+  end

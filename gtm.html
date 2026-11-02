@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><title>gtm.html</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<style>
+@page { size: A4; margin: 15mm 14mm; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "DM Sans", Arial, sans-serif; color: #021b47; font-size: 10.2pt; line-height: 1.42; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.hero { background: linear-gradient(170deg, #021732, #064397); color: #fff; border-radius: 12px; padding: 22px 24px; }
+.hero .tag { color: #86ea63; font-size: 8.5pt; font-weight: 700; letter-spacing: .14em; }
+.hero h1 { margin: 6px 0 10px; font-size: 21pt; line-height: 1.16; }
+.hero p { margin: 0; color: #d3e2fa; font-size: 10pt; }
+section { break-inside: auto; }
+.page { break-before: page; }
+h2 { font-size: 15pt; margin: 18px 0 9px; }
+.page > h2:first-child { margin-top: 0; }
+h3 { font-size: 10.5pt; margin: 13px 0 5px; }
+p { margin: 5px 0; }
+ul, ol { margin: 4px 0; padding-left: 16px; }
+li { margin: 2.5px 0; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.card { background: #f1f4f9; border-radius: 9px; padding: 10px 12px; }
+.lime { background: #86ea63; border-radius: 9px; padding: 9px 12px; font-weight: 700; margin: 9px 0; }
+.warn { background: #fff4e0; border-radius: 9px; padding: 8px 12px; margin: 8px 0; font-size: 9.4pt; }
+table { width: 100%; border-collapse: collapse; margin: 6px 0; font-size: 9.1pt; }
+th { background: #021b47; color: #fff; text-align: left; padding: 5px 8px; font-weight: 700; }
+td { padding: 5px 8px; border-bottom: 1px solid #e4e7ec; vertical-align: top; }
+.num { text-align: right; white-space: nowrap; }
+tr.total td { font-weight: 700; }
+.small { font-size: 8.5pt; color: #667085; }
+tr { break-inside: avoid; }
+</style></head><body>
+
+<div class="hero">
+  <div class="tag">CLARA DOLLAR | GTM Y PRICING</div>
+  <h1>Pagar en dólares digitales a cualquier persona y que los gaste como efectivo</h1>
+  <p>Fondeo, redes, monetización, cashback, regulación y país de lanzamiento. Todo número es un supuesto de trabajo [S] para discutir. Lo que viene de una fuente pública se marca [F] y se lista al final.</p>
+</div>
+
+<h2>1. Resumen</h2>
+<div class="two">
+  <div class="card"><b>Producto.</b> La empresa fondea una vez en USD o USDC, asigna saldo o programa pagos por fecha. La persona (empleada, contratista o independiente) verifica su identidad, recibe dólares digitales con tarjeta virtual y retira a su banco local. En la app nunca ve cripto.</div>
+  <div class="card"><b>Tres segmentos.</b> Empresas clientes (pagan por pago), personas (cuenta y tarjeta gratis, pagan spread explícito y retiros extra) y partners por API (reparto de ingresos con mínimo).</div>
+</div>
+<div class="lime">Decisión: arrancar con pagos a contratistas y reembolsos en Perú como hipótesis, desde clientes que ya tienen USD. Salario en dólares digitales queda fuera de los primeros 90 días.</div>
+<h3>Por qué esta secuencia</h3>
+<ul>
+  <li>Contratistas y reembolsos crean uso recurrente de la tarjeta sin entrar en el problema del salario.</li>
+  <li>Un cliente que ya tiene USD evita tratar la conversión en origen como operación cambiaria.</li>
+  <li>El independiente (cuenta sin empleador) se activa después: cuesta KYC y tarjeta sin que un pago de empresa financie el costo.</li>
+</ul>
+<h3>Cómo le hablamos a la persona</h3>
+<ul>
+  <li>Decimos <b>dólares digitales</b>, con esta nota visible: "Los dólares digitales son activos virtuales respaldados 1:1, no moneda fiduciaria". Legal debe validar el texto y el respaldo en cada país.</li>
+  <li>Al convertir mostramos siempre la <b>tasa real del mercado</b>, el <b>spread explícito</b> y, si aplica, la parte que definió la empresa.</li>
+</ul>
+<p class="small">Cifras de este documento: tarifas, spreads, interchange y cashback son supuestos del prototipo, no datos de Clara ni de mercado.</p>
+
+<section class="page">
+<h2>2. Cómo se fondea</h2>
+<h3>La empresa</h3>
+<table>
+<tr><th>Vía</th><th>Cómo funciona</th><th>Cuándo conviene</th></tr>
+<tr><td>Wire o ACH</td><td>Cuenta virtual en USD asignada a la empresa, con referencia única. El on-ramp convierte a USDC.</td><td>Tesorería en USD sin cripto</td></tr>
+<tr><td>USDC directo</td><td>La empresa envía USDC a la dirección de depósito de su vault, en la red elegida. Se acredita tras confirmaciones.</td><td>Empresas que ya operan con stablecoins</td></tr>
+<tr><td>On-ramp de moneda local</td><td>Un proveedor tipo Bitso Business convierte pesos a USDC. Hoy Clara y Bitso usan USDC como garantía de tarjetas, con piloto en México [F].</td><td>Empresas con caja en moneda local</td></tr>
+</table>
+<h3>Qué pasa después del depósito</h3>
+<ol>
+  <li><b>Intención de fondeo.</b> La plataforma registra qué se espera y cuánto. Una solicitud repetida no fondea dos veces.</li>
+  <li><b>Custodia.</b> Vault por empresa en un custodio institucional, con direcciones por red y retiros con aprobación por política. Solo la confirmación del custodio acredita.</li>
+  <li><b>Ledger.</b> Doble entrada e inmutable. Pendiente = depósitos sin confirmar. Retenido = autorizaciones abiertas. Disponible = confirmado menos retenciones, contabilizado, comisiones y adeudado. Puede quedar corto: el clearing puede superar lo autorizado.</li>
+  <li><b>Tarjeta Client Managed.</b> El emisor pregunta al core en cada autorización y el core decide en milisegundos contra su ledger. Si no responde, el emisor aplica una política de respaldo (stand-in) con tope bajo.</li>
+  <li><b>Liquidación y conciliación diarias.</b> Lo compensado se paga al emisor desde USDC convertido a USD. El ledger se compara con custodio y emisor; una diferencia es una excepción, no un ajuste automático.</li>
+</ol>
+<h3>El independiente</h3>
+<ul>
+  <li><b>Recarga en moneda local:</b> transferencia desde su banco, con tasa real del mercado y spread visibles. La tasa se fija cuando llega el dinero.</li>
+  <li><b>Recibe pagos desde EE. UU.:</b> datos de cuenta propios a su nombre (ACH o wire), que le llegan como dólares digitales. Requiere banco aliado y control del origen de los fondos. En el prototipo es simulado.</li>
+  <li><b>Desde otra billetera:</b> opción secundaria para quien ya tiene dólares digitales. Se indica la red y el riesgo de equivocarla.</li>
+</ul>
+<p>Mismo ledger y mismas reglas de KYC. No opera hasta tener KYC aprobado.</p>
+<h3>Del lado del negocio (capital)</h3>
+<ul>
+  <li><b>Piloto sin capital propio de tesorería:</b> cada empresa fondea antes de pagar. El riesgo de crédito es bajo, no cero: clearing mayor que la autorización, stand-in y contracargos pueden dejar saldos negativos que el programa cubre y recupera del siguiente pago.</li>
+  <li><b>Capital de trabajo [S]:</b> colchón para liquidar al emisor y reserva para esos saldos negativos. Tamaño por definir con datos del piloto.</li>
+  <li><b>Costos fijos previos [S]:</b> programa de tarjeta con emisor, custodio y proveedor de KYC. Se confirman con cotización antes de fijar precios.</li>
+</ul>
+</section>
+
+<section class="page">
+<h2>3. Cadenas y costo por transferencia</h2>
+<p class="small">Fotos del 1-nov-2026, de agregadores públicos; se mueven. Sirven como orden de magnitud, no para cerrar precios.</p>
+<table>
+<tr><th>Red</th><th>Costo aprox. por transferencia de USDC</th><th>Nota</th></tr>
+<tr><td>Stellar</td><td>menos de $0.00001</td><td>Bueno para remesas puras</td></tr>
+<tr><td>Solana</td><td>~$0.0005</td><td>Cuenta de token nueva cuesta ~$0.18 una vez</td></tr>
+<tr><td>Base (L2)</td><td>$0.0006 a $0.0009</td><td>Liquidez y on/off-ramps maduros</td></tr>
+<tr><td>Polygon PoS</td><td>~$0.0017</td><td></td></tr>
+<tr><td>Arbitrum</td><td>$0.002 a $0.003</td><td></td></tr>
+<tr><td>Arc (Circle)</td><td>~$0.001 a $0.002, objetivo de diseño</td><td>Gas en USDC, finalidad menor a 1 s. Mainnet desde el 16-sep-2026 [F]. La demo usa su testnet</td></tr>
+<tr><td>Ethereum L1</td><td>variable; mediana observada $0.12 a $0.21</td><td>Solo tesorería grande</td></tr>
+<tr><td>Tron</td><td>mediana ~$0.12, hasta ~$2.1</td><td>Fuerte en LATAM por USDT, no recomendada para USDC</td></tr>
+</table>
+<div class="lime">Recomendación: USDC en Base o Solana como rieles de entrada y salida. Stellar si el corredor es de remesas puras. La red es configuración, no arquitectura.</div>
+<h3>Criterios para elegir</h3>
+<ul>
+  <li>Soporte del custodio y del on-ramp en esa red.</li>
+  <li>Liquidez de USDC y facilidad de salir a moneda local.</li>
+  <li>Costo predecible y finalidad rápida. Un depósito en la red equivocada se trata como excepción: no se acredita y se recupera con costo.</li>
+</ul>
+<h3>Testnet de la demo</h3>
+<p>El prototipo trae un script que envía USDC real en Arc Testnet y muestra el enlace del explorador en la pestaña Tesorería. Sin fondos, funciona en modo simulado y lo indica en pantalla. Alternativa conocida: Base Sepolia, cambiando la red y fondeando ETH de prueba para gas.</p>
+</section>
+
+<section class="page">
+<h2>4. Monetización</h2>
+<table>
+<tr><th>Línea</th><th>Quién paga</th><th>Cuánto [S]</th><th>Quién la recibe</th></tr>
+<tr><td>Fee por pago</td><td>Empresa</td><td>0,75% por pago, mínimo USD 1. Se muestra antes de enviar</td><td>Plataforma</td></tr>
+<tr><td>Spread FX</td><td>Persona, en retiros y compras en moneda local</td><td>1% por defecto, siempre explícito sobre la tasa real del mercado. La empresa lo configura entre 0,5% y 3%</td><td>Piso de 0,5% a la plataforma; el resto a la empresa como markup</td></tr>
+<tr><td>Interchange neto</td><td>Comercio</td><td>~1% del gasto con tarjeta (placeholder)</td><td>Programa, a repartir con el emisor. De aquí sale el cashback</td></tr>
+<tr><td>Retiro extra</td><td>Persona</td><td>1 gratis por pago recibido, luego USD 1,50</td><td>Plataforma</td></tr>
+<tr><td>On-ramp</td><td>Empresa (traslado)</td><td>~0,1% de lo fondeado</td><td>Proveedor de on-ramp</td></tr>
+<tr><td>Partners API</td><td>No pagan por adelantado</td><td>Reparto del 30% de fee, spread e interchange de sus usuarios, con mínimo mensual</td><td>Partner</td></tr>
+</table>
+<h3>Spread configurable por la empresa</h3>
+<p>La empresa decide cuánto cobra a su gente por convertir. La plataforma siempre conserva un piso de 0,5%. Lo que la empresa sube sobre ese piso es ingreso suyo y baja su costo neto. La persona ve la tasa real, el spread y la parte de su empresa antes de confirmar.</p>
+<div class="warn"><b>Riesgo a validar:</b> que el empleador gane sobre la conversión de su propia gente puede ser un problema laboral o de conducta, sobre todo en pagos parecidos a salario. Por defecto se usaría el piso y el markup quedaría sujeto a revisión legal por país.</div>
+<h3>Economía por persona activa al mes (ejemplo, no pronóstico)</h3>
+<p class="small">60% retirado y 40% gastado con tarjeta en comercios locales. Spread al 1%: piso plataforma 0,5%, markup empresa 0,5%. Las compras en USD no pagan spread, así que este es el caso máximo.</p>
+<table>
+<tr><th>Concepto (USD)</th><th class="num">Recibe 1.200</th><th class="num">Recibe 300</th></tr>
+<tr><td>Fee por pago, 0,75% mínimo 1 (plataforma)</td><td class="num">9,00</td><td class="num">2,25</td></tr>
+<tr><td>Spread piso 0,5% sobre el 100% (plataforma)</td><td class="num">6,00</td><td class="num">1,50</td></tr>
+<tr><td>Interchange neto 1% del 40% (plataforma)</td><td class="num">4,80</td><td class="num">1,20</td></tr>
+<tr class="total"><td>Ingreso bruto de la plataforma</td><td class="num">19,80</td><td class="num">4,95</td></tr>
+<tr><td>Markup de la empresa 0,5% (ingreso de la empresa)</td><td class="num">6,00</td><td class="num">1,50</td></tr>
+<tr><td>Costo neto para la empresa (fee menos markup)</td><td class="num">3,00</td><td class="num">0,75</td></tr>
+</table>
+<p class="small">Faltan costos: KYC por persona, emisión y procesamiento de tarjeta, custodia, soporte y fraude. Sin cotizaciones reales no calculo margen. Con un reparto de partner de 30% el margen baja; por eso el partner lleva un mínimo mensual.</p>
+</section>
+
+<section class="page">
+<h2>5. Cashback como palanca de producto</h2>
+<div class="lime">Cashback en compras con tarjeta para mover uso de "recibo y retiro" a "recibo y gasto". Se financia solo con interchange y se enciende cuando haya datos, no el día 0.</div>
+<h3>Qué problema resuelve</h3>
+<ul>
+  <li><b>Activación:</b> da una razón concreta para la primera compra con tarjeta, una de las métricas clave del piloto.</li>
+  <li><b>Retención de saldo:</b> quien gasta con la tarjeta deja dinero en la cuenta y depende menos del retiro inmediato.</li>
+  <li><b>Boca a boca y beneficio:</b> es fácil de explicar, alimenta el pedido de empleados a su área de personas, y una empresa podría patrocinar una tasa mayor.</li>
+</ul>
+<h3>Diseño propuesto [S]</h3>
+<table>
+<tr><th>Regla</th><th>Propuesta</th><th>Por qué</th></tr>
+<tr><td>Tasa base</td><td>0,25% del gasto con tarjeta</td><td>Deja la mayor parte del interchange para cubrir costos</td></tr>
+<tr><td>Tasa con pago recurrente</td><td>0,50% para quien recibió un pago en los últimos 30 días</td><td>Premia el uso que queremos y evita abuso de cuentas sin actividad</td></tr>
+<tr><td>Tope</td><td>USD 10 al mes por persona, y nunca más del 50% del interchange neto</td><td>Limita la pérdida si el interchange real resulta menor</td></tr>
+<tr><td>Se acredita</td><td>Al contabilizarse la compra. Se revierte con reembolsos y contracargos</td><td>Evita comprar, ganar cashback y devolver</td></tr>
+<tr><td>Excluye</td><td>Retiros, cargos tipo efectivo y categorías bloqueadas</td><td>No debe premiar sacar dinero ni gasto de alto riesgo</td></tr>
+</table>
+<h3>Cuánto cuesta (mismo ejemplo)</h3>
+<table>
+<tr><th>Concepto (USD al mes)</th><th class="num">Recibe 1.200</th><th class="num">Recibe 300</th></tr>
+<tr><td>Gasto con tarjeta (40%)</td><td class="num">480,00</td><td class="num">120,00</td></tr>
+<tr><td>Interchange neto (1%)</td><td class="num">4,80</td><td class="num">1,20</td></tr>
+<tr><td>Cashback al 0,25% / 0,50%</td><td class="num">1,20 / 2,40</td><td class="num">0,30 / 0,60</td></tr>
+<tr class="total"><td>Ingreso bruto de la plataforma después de cashback</td><td class="num">18,60 / 17,40</td><td class="num">4,65 / 4,35</td></tr>
+</table>
+<h3>Cómo se decide</h3>
+<ul>
+  <li><b>Condición previa:</b> interchange neto confirmado por escrito con el emisor. Sin ese dato no se promete ninguna tasa.</li>
+  <li><b>Prueba:</b> desde el día 30, una cohorte con cashback y otra sin él, y línea base previa. Con 60 a 150 personas es una señal, no una prueba estadística.</li>
+  <li><b>Se mide:</b> primera compra a 30 días, gasto con tarjeta sobre saldo recibido, retiro en las primeras 24 horas y costo de cashback sobre interchange adicional.</li>
+  <li><b>Escalar:</b> el interchange adicional paga el cashback a 60 días. <b>Cambiar:</b> sube el uso pero no se paga, se baja la tasa o se limita a la primera compra. <b>Parar:</b> no mueve el uso o aparece abuso.</li>
+  <li><b>Por validar:</b> tratamiento tributario y si cada país lo considera una promoción con reglas propias.</li>
+</ul>
+</section>
+
+<section class="page">
+<h2>6. Regulación por país</h2>
+<p><b>Principio.</b> No reemplazamos la nómina formal. Empezamos con contratistas y reembolsos. Salario solo donde la ley lo permita y por elección documentada de la persona. Todo lo de esta página se valida con legal antes de decidir.</p>
+<table>
+<tr><th>País</th><th>Qué se verificó [F]</th><th>Efecto en el producto</th></tr>
+<tr><td>México</td><td>Ley Federal del Trabajo, art. 101: el salario en efectivo se paga en moneda de curso legal. Circular 4/2019 del Banco de México limita a entidades reguladas a operaciones internas con activos virtuales</td><td>Salario bloqueado. Contratistas y reembolsos sujetos a revisión de la circular</td></tr>
+<tr><td>Brasil</td><td>CLT, art. 463: el salario en dinero se paga en moneda corriente; si no, se considera no pagado. BCB 521 trata estas operaciones como cambiarias y BCB 561 restringe a proveedores eFX</td><td>Salario bloqueado. No es origen recomendado del primer piloto</td></tr>
+<tr><td>Argentina</td><td>Ley 27.802 (B.O. 6-mar-2026): remuneración en moneda nacional o extranjera y, por art. 124 LCT, solo por acreditación en cuenta bancaria o de ahorro oficial. El BCRA habilitó cuentas sueldo en dólares</td><td>Salario bloqueado en este producto: no es cuenta bancaria. Los bancos ya compiten en sueldo en dólares</td></tr>
+<tr><td>Chile</td><td>Código del Trabajo, art. 54: las remuneraciones se pagan en moneda de curso legal, con excepciones puntuales. No encontré dictamen sobre dólares</td><td>Salario bloqueado</td></tr>
+<tr><td>Colombia</td><td>CST, art. 135: se puede pactar en moneda extranjera y el trabajador puede exigir el equivalente en pesos. Sin regla específica de stablecoins; proyecto de ley sin aprobar</td><td>Origen posible para el piloto, a validar. No es destino</td></tr>
+<tr><td>Perú</td><td><b>No verifiqué norma sobre salario en moneda extranjera.</b> Sí existe la Resolución SBS 02648-2024 con reglas contra el lavado para proveedores de activos virtuales</td><td>Salario bloqueado por precaución. <b>Falta definir si necesitamos registro como proveedor</b></td></tr>
+</table>
+<h3>Matriz del prototipo (ilustrativa)</h3>
+<table>
+<tr><th>Tipo de pago</th><th>Perú</th><th>Chile</th><th>Argentina</th></tr>
+<tr><td>Contratista</td><td>Permitido</td><td>Permitido</td><td>Permitido</td></tr>
+<tr><td>Reembolso</td><td>Permitido</td><td>Permitido</td><td>Permitido</td></tr>
+<tr><td>Beneficio o bono</td><td>Con aceptación</td><td>Con aceptación</td><td>Con aceptación</td></tr>
+<tr><td>Salario</td><td>Bloqueado</td><td>Bloqueado</td><td>Bloqueado</td></tr>
+</table>
+<h3>Otras condiciones</h3>
+<ul>
+  <li>Clasificar como contratista a quien es empleado es riesgo del cliente. El producto no lo resuelve.</li>
+  <li>KYC y monitoreo AML para todos. Nadie recibe saldo disponible sin KYC aprobado. Rechazo final: el dinero sigue en la empresa.</li>
+  <li>El emisor hace su propia revisión: puede negar la tarjeta aunque el KYC se apruebe. Se guardan dos veredictos.</li>
+  <li>Divulgación: activos virtuales respaldados 1:1, no moneda fiduciaria ni depósito bancario. Hay que demostrar ese respaldo con conciliación y reservas.</li>
+  <li>Emisión a residentes de países sin operación local: definir el programa de tarjeta y respetar límites, impuestos y reporte del país donde vive la persona.</li>
+  <li>Datos: documentos y biometría con el proveedor de KYC; datos regulados cifrados; PAN y CVV solo con el emisor.</li>
+</ul>
+</section>
+
+<section class="page">
+<h2>7. País de lanzamiento y primeros 90 días</h2>
+<div class="lime">Perú es una hipótesis de trabajo para el piloto, con contratistas y reembolsos. Todavía no es una conclusión.</div>
+<h3>Por qué Perú hoy</h3>
+<ul>
+  <li>Clara no opera ahí (opera en MX, BR y CO), así que representa el dolor del caso: pagar donde no hay operación local.</li>
+  <li>El piloto no depende de resolver salario, porque no lo incluye.</li>
+</ul>
+<h3>Qué falta para confirmarlo</h3>
+<table>
+<tr><th>Pregunta</th><th>Quién responde</th><th>Si la respuesta es no</th></tr>
+<tr><td>¿Cuántas personas tienen los clientes actuales en Perú?</td><td>Datos de clientes y customer success</td><td>Se elige el país con más personas</td></tr>
+<tr><td>¿El programa de tarjeta puede emitir a residentes en Perú?</td><td>Emisor y red</td><td>Se cambia de país o de programa</td></tr>
+<tr><td>¿Necesitamos registro como proveedor de activos virtuales?</td><td>Legal local</td><td>Se suma al plan o se cambia de país</td></tr>
+<tr><td>¿Hay off-ramp a soles con costo y tiempo aceptables?</td><td>Partner de stablecoin</td><td>Se revisa el spread o el país</td></tr>
+</table>
+<h3>Plan</h3>
+<table>
+<tr><th>Cuándo</th><th>Qué</th></tr>
+<tr><td>Semanas 1 a 4</td><td>Responder las preguntas de arriba, definir tipos de pago, confirmar costos e interchange, cerrar 2 o 3 clientes piloto (20 a 50 personas cada uno)</td></tr>
+<tr><td>Día 0</td><td>Primer pago real. Antes: visto bueno legal, programa de tarjeta y partner de stablecoin contratados</td></tr>
+<tr><td>Día 0 a 30</td><td>Línea base sin cashback: activación (KYC aprobado y saldo a 14 días), rechazo de KYC, primera compra, aprobación de autorizaciones, tiempo de entrega</td></tr>
+<tr><td>Día 30 a 90</td><td>Prueba de cashback por cohortes y margen por persona activa con costos reales</td></tr>
+</table>
+<p><b>Parar:</b> activación baja y margen negativo a la vez, o bloqueo regulatorio. <b>Cambiar:</b> si activan pero no usan la tarjeta, probar cashback y, si no alcanza, el producto pasa a recepción y retiro. <b>Escalar:</b> verde en empresas, activación y margen; se abre el segundo corredor y el primer partner.</p>
+<p>Umbrales completos y competencia (Deel, Ontop, transferencia bancaria) en gtm-pricing.md.</p>
+<h3>Fuentes [F]</h3>
+<p class="small">México: Ley Federal del Trabajo (STPS y Justia México), CryptoSlate (Circular 4/2019). Brasil: CLT art. 463 (Lei na Mão), Ledger Insights (BCB 521 y 561). Argentina: KPMG, abogados.com.ar y Estudio Vilaplana (Ley 27.802), iProfesional y Diario UNO (cuentas sueldo en dólares). Chile: Dirección del Trabajo y Derechopedia (art. 54). Colombia: leyonline.co (CST art. 135), Banco de la República (concepto JDS-15863), Bloomberg Línea. Perú: LP Derecho e IusLatin (Resolución SBS 02648-2024). Clara: Portal Tela y clara.com (Clara Global y Bitso Business). Redes: getcoinage.com, chainscorelabs.com, tanod.dev, docs.arc.io, docs.arc-scan.org y The Block (mainnet de Arc). Consultadas entre el 31-oct y el 1-nov-2026. Son fuentes secundarias salvo la Dirección del Trabajo y el Banco de la República: confirmar con legal.</p>
+</section>
+</body></html>

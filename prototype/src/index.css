@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --color-brand-50: #eaf1fd;
+  --color-brand-100: #d3e2fa;
+  --color-brand-500: #3d77db;
+  --color-brand-600: #1959d2;
+  --color-brand-700: #0f3fa0;
+  --color-ink: #021b47;
+  --color-night: #02122f;
+  --color-lime: #86ea63;
+  --color-lime-600: #6fd34c;
+  --color-mist: #f1f4f9;
+}
+
+body { @apply bg-mist text-ink antialiased; font-family: var(--font-sans); }
+.hero-clara { background: linear-gradient(170deg, #021732 0%, #064397 100%); }
+.press { transition: transform .12s ease, background-color .15s ease, opacity .15s ease; }
+.press:active:not(:disabled) { transform: scale(.975); }
+@keyframes pageIn { from { transform: translateX(10px); opacity: 0 } to { transform: none; opacity: 1 } }
+.page-in { animation: pageIn .28s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes toastIn { from { transform: translateY(-16px); opacity: 0 } to { transform: none; opacity: 1 } }
+.toast-in { animation: toastIn .3s cubic-bezier(.2,.9,.2,1) both; }
+@keyframes rowIn { from { transform: translateY(6px); opacity: 0 } to { transform: none; opacity: 1 } }
+.row-in { animation: rowIn .3s ease-out both; }
+@keyframes stepIn { from { opacity: .35 } to { opacity: 1 } }
+@keyframes pop { from { transform: scale(.92); opacity: 0 } to { transform: scale(1); opacity: 1 } }
+.pop { animation: pop .25s ease-out; }
+@keyframes fadeUp { from { transform: translateY(10px); opacity: 0 } to { transform: none; opacity: 1 } }
+.fade-up { animation: fadeUp .35s ease-out both; }
+@keyframes sheetUp { from { transform: translateY(100%) } to { transform: none } }
+.sheet-up { animation: sheetUp .35s cubic-bezier(.2,.9,.2,1) both; }
+@keyframes shimmer { from { background-position: -200% 0 } to { background-position: 200% 0 } }
+.shimmer { background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.28) 50%, transparent 70%); background-size: 200% 100%; animation: shimmer 2.6s linear infinite; }
+@keyframes ringPulse { 0% { box-shadow: 0 0 0 0 rgba(134,234,99,.55) } 100% { box-shadow: 0 0 0 18px rgba(134,234,99,0) } }
+.ring-pulse { animation: ringPulse 1.4s ease-out infinite; }
+@keyframes drawCheck { to { stroke-dashoffset: 0 } }
+.draw-check { stroke-dasharray: 40; stroke-dashoffset: 40; animation: drawCheck .5s .15s ease-out forwards; }
+@keyframes tapPhone { 0%,100% { transform: translateX(0) rotate(0) } 50% { transform: translateX(-10px) rotate(-4deg) } }
+.tap-phone { animation: tapPhone 1.2s ease-in-out infinite; }
+@keyframes shake { 10%,90% { transform: translateX(-1px) } 20%,80% { transform: translateX(2px) } 30%,50%,70% { transform: translateX(-4px) } 40%,60% { transform: translateX(4px) } }
+.shake { animation: shake .5s both; }
+@keyframes countdown { from { stroke-dashoffset: 0 } to { stroke-dashoffset: 100 } }
+
+/* Card flip */
+.flip-scene { perspective: 1100px; }
+.flip-card { position: relative; transform-style: preserve-3d; transition: transform .8s cubic-bezier(.2,.8,.2,1); }
+.flip-card.flipped { transform: rotateY(180deg); }
+.flip-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 20px; overflow: hidden; }
+.flip-back { transform: rotateY(180deg); }
+@media (prefers-reduced-motion: reduce) {
+  .flip-card { transition: none }
+  .shimmer, .ring-pulse, .tap-phone, .page-in, .toast-in, .row-in, .fade-up, .pop, .sheet-up, .shake { animation: none }
+  .draw-check { animation: none; stroke-dashoffset: 0 }
+}

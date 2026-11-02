@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan de producto</title>
+<style>
+  :root {
+    --ink: #021B47; --night: #02122F; --brand: #1959D2; --brand-700: #0F3FA0; --brand-50: #EAF1FD;
+    --lime: #86EA63; --mist: #F1F3F7; --line: #E4E7EC; --line-2: #D0D5DD; --muted: #667085; --white: #fff;
+    --amber-bg: #FEF3C7; --amber: #92400E; --green-bg: #DCFCE7; --green: #166534; --rose-bg: #FFE4E6; --rose: #9F1239;
+    --violet-bg: #EDE9FE; --violet: #5B21B6; --sky-bg: #E0F2FE; --sky: #075985;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--mist); color: var(--ink); font-family: "DM Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; font-size: 14px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  .app { display: grid; grid-template-columns: 236px minmax(0, 1fr); min-height: 100vh; gap: 20px; padding: 16px; }
+  /* Sidebar */
+  .side { background: var(--ink); color: #fff; border-radius: 14px; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; position: sticky; top: 16px; height: calc(100vh - 32px); }
+  .brand { display: flex; align-items: center; gap: 8px; padding: 4px 8px 2px; }
+  .brand svg { height: 20px; width: auto; }
+  .product { margin: 6px 8px 16px; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--lime); }
+  .nav { display: flex; flex-direction: column; gap: 2px; }
+  .nav button { position: relative; display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 12px; border: 0; border-radius: 9px; background: transparent; color: rgba(224, 236, 255, .78); font-size: 14px; font-weight: 500; text-align: left; white-space: nowrap; }
+  .nav button:hover { background: rgba(255,255,255,.06); color: #fff; }
+  .nav button[aria-current="page"] { background: rgba(255,255,255,.1); color: #fff; }
+  .nav button[aria-current="page"]::before { content: ""; position: absolute; left: 0; top: 8px; bottom: 8px; width: 4px; border-radius: 4px; background: var(--lime); }
+  .nav .n { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 6px; background: rgba(255,255,255,.08); font-size: 11px; font-weight: 700; }
+  .legend { margin-top: auto; border-radius: 10px; background: rgba(255,255,255,.05); padding: 12px; font-size: 12px; color: rgba(224,236,255,.85); }
+  .legend b { color: #fff; }
+  .legend div + div { margin-top: 6px; }
+  /* Main */
+  main { min-width: 0; }
+  .top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin: 4px 0 16px; }
+  h1 { margin: 0; font-size: 24px; letter-spacing: -.01em; }
+  .sub { margin: 4px 0 0; color: var(--muted); max-width: 72ch; }
+  h2 { margin: 0 0 4px; font-size: 17px; }
+  h3 { margin: 0 0 6px; font-size: 15px; }
+  .panel { background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 20px; }
+  .panel + .panel, .grid + .panel, .panel + .grid { margin-top: 16px; }
+  .hint { color: var(--muted); margin: 0 0 12px; }
+  .grid { display: grid; gap: 16px; }
+  .g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  ul.clean { margin: 0; padding-left: 18px; }
+  ul.clean li + li { margin-top: 4px; }
+  .muted { color: var(--muted); }
+  .small { font-size: 12px; }
+  .hero { background: linear-gradient(170deg, #021732 0%, #064397 100%); color: #fff; border-radius: 14px; padding: 20px; }
+  .hero .sub { color: #BFD6FF; }
+  .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
+  .kpi { background: rgba(255,255,255,.08); border-radius: 10px; padding: 12px; }
+  .kpi b { display: block; font-size: 22px; }
+  .kpi span { font-size: 12px; color: #BFD6FF; }
+  /* Tags */
+  .src { display: inline-block; margin-left: 4px; padding: 0 6px; border-radius: 999px; font-size: 10.5px; font-weight: 700; vertical-align: 1px; white-space: nowrap; }
+  .src.h { background: var(--amber-bg); color: var(--amber); }
+  .src.f { background: var(--sky-bg); color: var(--sky); }
+  .src.c { background: var(--brand-50); color: var(--brand-700); }
+  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; border-radius: 999px; font-size: 11.5px; font-weight: 600; white-space: nowrap; }
+  .t-empresa { background: var(--brand-50); color: var(--brand-700); }
+  .t-empleado { background: var(--green-bg); color: var(--green); }
+  .t-independiente { background: var(--amber-bg); color: var(--amber); }
+  .t-partner { background: var(--violet-bg); color: var(--violet); }
+  .lvl { display: inline-block; min-width: 54px; text-align: center; padding: 1px 8px; border-radius: 999px; font-size: 11.5px; font-weight: 600; }
+  .lvl.alto { background: var(--ink); color: #fff; }
+  .lvl.medio { background: var(--line); color: var(--ink); }
+  .lvl.bajo { background: var(--mist); color: var(--muted); }
+  .dec { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 11.5px; font-weight: 700; }
+  .dec.mvp { background: var(--lime); color: var(--ink); }
+  .dec.despues { background: var(--brand-50); color: var(--brand-700); }
+  .dec.fuera { background: var(--rose-bg); color: var(--rose); }
+  /* Tables */
+  .tw { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); padding: 8px 10px 8px 0; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  td { padding: 10px 10px 10px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: 0; }
+  /* Chips and buttons */
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { border: 1px solid var(--line-2); background: #fff; border-radius: 999px; padding: 5px 12px; font-size: 12.5px; font-weight: 600; }
+  .chip[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .btn { border: 1px solid var(--line-2); background: #fff; border-radius: 9px; padding: 7px 12px; font-size: 13px; font-weight: 700; }
+  .btn:hover { background: var(--mist); }
+  .status { border: 0; border-radius: 999px; padding: 3px 10px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+  .s0 { background: var(--mist); color: var(--muted); }
+  .s1 { background: var(--sky-bg); color: var(--sky); }
+  .s2 { background: var(--green-bg); color: var(--green); }
+  /* Hypotheses */
+  .hyp { border: 1px solid var(--line); border-radius: 12px; padding: 16px; background: #fff; }
+  .hyp .k { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--brand); }
+  .hyp dl { margin: 10px 0 0; }
+  .hyp dt { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-top: 10px; }
+  .hyp dd { margin: 2px 0 0; }
+  .guide { counter-reset: q; }
+  .guide section + section { margin-top: 14px; }
+  .guide ol { margin: 6px 0 0; padding-left: 20px; }
+  .guide li + li { margin-top: 4px; }
+  /* Roadmap */
+  .phases { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .phase { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+  .phase .when { font-size: 12px; font-weight: 700; color: var(--brand); }
+  .phase .bar { height: 6px; border-radius: 6px; background: var(--line); overflow: hidden; }
+  .phase .bar i { display: block; height: 100%; background: var(--lime); }
+  .gate { border-radius: 10px; background: var(--mist); padding: 10px 12px; font-size: 13px; }
+  .gate b { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-bottom: 2px; }
+  /* Stories */
+  .story { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+  .story .as { font-size: 15px; margin: 8px 0 10px; }
+  .story ul { margin: 0; padding-left: 0; list-style: none; }
+  .story li { position: relative; padding-left: 24px; }
+  .story li + li { margin-top: 6px; }
+  .story li::before { content: ""; position: absolute; left: 2px; top: 4px; width: 12px; height: 12px; border: 1.5px solid var(--line-2); border-radius: 4px; }
+  /* Kanban */
+  .kb-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
+  .kb-filters { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+  .kb-filters .lbl { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin-right: 2px; }
+  .board { display: grid; grid-template-columns: repeat(5, minmax(220px, 1fr)); gap: 12px; overflow-x: auto; padding-bottom: 6px; }
+  .col { background: #E9EDF3; border-radius: 12px; padding: 10px; min-height: 420px; display: flex; flex-direction: column; }
+  .col header { display: flex; align-items: center; justify-content: space-between; padding: 2px 4px 10px; font-weight: 700; }
+  .col header .count { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .col .list { flex: 1; display: flex; flex-direction: column; gap: 8px; min-height: 60px; border-radius: 10px; transition: background .15s; }
+  .col.over .list { background: rgba(25, 89, 210, .08); outline: 2px dashed rgba(25, 89, 210, .35); outline-offset: 2px; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 10px 11px; box-shadow: 0 1px 2px rgba(2, 27, 71, .05); cursor: grab; user-select: none; }
+  .card:active { cursor: grabbing; }
+  .card.dragging { opacity: .45; }
+  .card .t { font-weight: 600; line-height: 1.35; }
+  .card .note { margin-top: 4px; font-size: 12px; color: var(--muted); }
+  .card .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+  .card .foot { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-top: 10px; }
+  .owner { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+  .av { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; font-size: 10.5px; font-weight: 700; }
+  .av.pm { background: var(--ink); color: #fff; }
+  .av.eng { background: var(--brand-50); color: var(--brand-700); }
+  .av.legal { background: var(--rose-bg); color: var(--rose); }
+  .av.diseno { background: var(--lime); color: var(--ink); }
+  .mv { display: inline-flex; gap: 2px; }
+  .mv button { width: 24px; height: 24px; border: 1px solid var(--line); border-radius: 6px; background: #fff; font-size: 12px; line-height: 1; color: var(--muted); }
+  .mv button:hover:not(:disabled) { background: var(--mist); color: var(--ink); }
+  .mv button:disabled { opacity: .35; cursor: default; }
+  .tab[hidden] { display: none; }
+  .foot-note { margin-top: 18px; color: var(--muted); font-size: 12px; }
+  @media (max-width: 1100px) { .g3, .phases { grid-template-columns: 1fr; } .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 820px) {
+    .app { grid-template-columns: minmax(0, 1fr); padding: 12px 16px; gap: 14px; }
+    .side { position: static; height: auto; padding: 12px; min-width: 0; }
+    .nav { flex-direction: row; overflow-x: auto; }
+    .nav button { width: auto; }
+    .nav button[aria-current="page"]::before { left: 10px; right: 10px; top: auto; bottom: 2px; width: auto; height: 3px; }
+    .legend { display: none; }
+    .g2 { grid-template-columns: 1fr; }
+    .board { grid-template-columns: repeat(5, 240px); }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand" aria-label="Clara"><svg aria-hidden="true" viewBox="0 0 156 31" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M16.1689 24.5551C16.1689 25.0392 15.7733 25.4309 15.2854 25.4309C14.7979 25.4309 14.4019 25.0392 14.4019 24.5551C14.4019 19.7921 10.4923 15.9171 5.68685 15.9171C5.19928 15.9171 4.80372 15.5254 4.80372 15.0417C4.80372 14.558 5.19928 14.1662 5.68685 14.1662C10.4923 14.1662 14.4019 10.2909 14.4019 5.5279C14.4019 5.04454 14.7979 4.65244 15.2854 4.65244C15.7733 4.65244 16.1689 5.04454 16.1689 5.5279C16.1689 10.2909 20.0782 14.1662 24.8833 14.1662H30.3235C29.8642 6.27829 23.2465 0 15.1757 0C6.80779 0 0 6.7478 0 15.0417C0 23.3359 6.80779 30.0834 15.1757 30.0834C23.2465 30.0834 29.8642 23.8054 30.3235 15.9171H24.8833C20.0782 15.9171 16.1689 19.7921 16.1689 24.5551" fill="white"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M121.698 9.81068C121.698 8.44304 121.309 7.44344 120.531 6.81221C119.752 6.18133 118.643 5.86572 117.204 5.86572H116.044V14.4494H117.16C118.599 14.4494 119.716 14.0786 120.509 13.3365C121.302 12.595 121.698 11.4197 121.698 9.81068V9.81068ZM131.848 25.0565H123.963C123.8 25.0565 123.646 24.9732 123.556 24.8384C122.241 22.8594 121.142 21.2753 120.26 20.0854C119.345 18.8526 118.208 17.4264 116.848 15.8084H116.043V22.0366C116.043 22.3831 116.109 22.6772 116.241 22.9178C116.373 23.1588 116.625 23.3612 116.997 23.5252C117.183 23.6022 117.475 23.6818 117.871 23.7635L118.507 23.8943C118.731 23.941 118.892 24.1359 118.892 24.3618V25.0565H107.195V24.384C107.195 24.1282 107.39 23.9124 107.649 23.8832L108.898 23.8069C109.363 23.7538 109.693 23.6886 109.889 23.6116C110.261 23.4576 110.511 23.2627 110.638 23.0264C110.766 22.7901 110.829 22.4896 110.829 22.1233V7.65797C110.829 7.3111 110.775 7.02204 110.667 6.79079C110.56 6.55955 110.3 6.35754 109.889 6.18411C109.576 6.05907 109.206 5.95286 108.78 5.86615L108.161 5.7401C107.936 5.69405 107.774 5.49877 107.774 5.2729V4.55127H119.465C122.079 4.55127 124.064 4.95326 125.42 5.75758C126.776 6.56224 127.454 7.77863 127.454 9.40643C127.454 10.8423 127.035 11.9958 126.198 12.8674C125.361 13.7396 124.086 14.4209 122.372 14.9123C123.038 15.76 123.814 16.7428 124.7 17.8604C125.586 18.9779 126.509 20.1194 127.468 21.285C127.772 21.6608 128.186 22.1209 128.71 22.6648C129.233 23.2093 129.86 23.544 130.262 23.6691C130.487 23.737 130.92 23.7948 131.268 23.8428L131.408 23.8623C131.66 23.8976 131.848 24.1104 131.848 24.3615V25.0565Z" fill="white"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M62.8935 19.2513C61.9428 20.7393 60.8894 21.8502 59.7331 22.5846C58.5765 23.319 57.5043 23.8507 56.0259 23.8507C55.0119 23.8507 54.158 23.6591 53.3238 23.3156C52.4893 22.9718 51.6922 22.3654 51.0773 21.6317C50.589 21.0489 50.2526 20.3659 49.9704 19.6674C49.6782 18.9445 49.5015 18.1714 49.0439 17.524C48.6336 16.9429 48.0943 16.4451 47.4685 16.0845C47.0919 15.8673 46.6844 15.7006 46.2588 15.5961C45.8692 15.5006 45.4576 15.4711 45.0388 15.469C44.7763 15.468 44.5298 15.3228 44.4617 15.0916C44.3585 14.7407 44.6452 14.4244 45.0119 14.4244C45.0289 14.4244 45.0459 14.4244 45.063 14.4244C46.1815 14.415 47.2737 13.9851 48.1318 13.2836C49.8328 11.8931 49.6268 9.63345 50.713 7.9075C51.5686 6.54658 53.2578 5.5053 55.2431 5.5053C56.8376 5.5053 58.1893 6.04275 59.298 7.1173C60.3541 8.14077 61.2666 9.71748 62.0351 11.8474C62.1046 12.0393 62.2905 12.1718 62.5016 12.1718H63.5452V4.66468H62.2026C62.0862 4.66468 61.9738 4.70434 61.8846 4.77627L60.9067 5.63101C60.5639 5.45388 59.4822 4.64183 57.8574 4.12018C55.967 3.5135 54.1508 3.45636 52.5111 3.70205C49.5666 4.14337 46.459 6.04308 44.7896 8.5841C43.4937 10.5557 42.8413 12.5102 42.8413 15.1551C42.8413 19.3552 45.3823 22.1278 46.2962 22.9724C47.1774 23.7868 48.8212 24.9817 50.2594 25.4704C51.697 25.9588 53.0916 26.1749 54.7409 26.1749C56.1154 26.1749 57.3157 25.8163 58.3068 25.4617C62.03 24.1283 63.7437 21.2415 64.1635 20.5723C64.3058 20.3454 64.2367 20.0499 64.0028 19.9111L62.8935 19.2513Z" fill="white"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M83.1194 19.99C83.2839 19.39 83.3905 18.9887 83.3905 18.9887C83.4075 18.7137 83.1865 18.4818 82.908 18.4818H81.8845C81.5719 19.224 80.3714 22.1646 79.8913 22.6681C79.433 23.1481 78.7827 23.3108 78.1552 23.4466C77.3714 23.6163 76.5917 23.7464 75.7861 23.7397C75.0986 23.7346 74.2563 23.7074 73.6723 23.3084C73.4183 23.135 73.2478 22.8654 73.1599 22.4991C73.0721 22.133 73.0278 21.6322 73.0278 20.996V7.51377C73.0278 7.17665 73.0915 6.87549 73.2185 6.61064C73.3451 6.34578 73.5991 6.1505 73.9795 6.02546C74.2917 5.92933 74.6604 5.85438 75.0847 5.80128L75.767 5.71658C76.0088 5.68632 76.1899 5.48365 76.1899 5.24299V4.55127H64.7864V5.26988C64.7864 5.49844 64.9505 5.69473 65.1776 5.73842L65.8041 5.85909C66.2287 5.9411 66.592 6.04966 66.8947 6.18444C67.3046 6.36729 67.563 6.57232 67.6703 6.79852C67.7775 7.02506 67.8317 7.31143 67.8317 7.6583V22.1236C67.8317 22.4991 67.7629 22.8076 67.6264 23.0483C67.4898 23.2889 67.246 23.4771 66.8947 23.6116C66.7482 23.6694 66.4456 23.7299 65.9873 23.7924C65.7077 23.8307 65.4503 23.8623 65.215 23.8882C64.9696 23.9148 64.7864 24.1181 64.7864 24.3618V25.0569H77.07H78.3084H81.3796L83.1194 19.99Z" fill="white"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M90.7769 16.8749L93.7392 9.56579L96.7456 16.8749H90.7769ZM107.061 23.8815L106.68 23.8009C106.318 23.7249 106.001 23.611 105.728 23.4587C105.367 23.25 105.089 23.0292 104.894 22.7962C104.699 22.5636 104.537 22.3045 104.411 22.0195C103.65 20.2717 102.728 18.0678 101.644 15.4075C100.882 13.5353 98.6139 8.07279 97.6228 5.6874C97.8189 5.62488 97.9605 5.45077 97.9605 5.2407V4.54932H96.6105H95.3654H94.2224C92.8461 7.77937 91.5897 10.7338 90.4529 13.4126C89.316 16.0914 88.1815 18.7659 87.0494 21.4353C86.8638 21.8914 86.6319 22.2857 86.3541 22.6181C86.0756 22.9505 85.7365 23.2308 85.3367 23.4587C85.1025 23.6016 84.7828 23.7132 84.3779 23.7935L83.6755 23.933C83.4494 23.9777 83.2874 24.1736 83.2874 24.4008V25.0549H91.807L91.8066 24.375C91.8066 24.133 91.6211 23.9279 91.3776 23.9014C90.4981 23.8056 89.8539 23.6651 89.4447 23.4799C88.9717 23.2665 88.7354 23.0077 88.7354 22.7035C88.7354 22.6087 88.7525 22.4423 88.7869 22.2047C88.8209 21.9674 88.9302 21.5825 89.1144 21.0505C89.2601 20.6421 89.4321 20.1766 89.6309 19.6542C89.8301 19.1319 90.0119 18.6755 90.1771 18.2859H97.348L99.1206 22.4756C99.1887 22.6373 99.2302 22.7653 99.2448 22.8604C99.2595 22.9552 99.267 23.0409 99.267 23.1166C99.267 23.3357 98.9115 23.5185 98.2002 23.6654C97.6715 23.775 97.1938 23.8547 96.7671 23.9034C96.5244 23.9313 96.3449 24.135 96.3449 24.3756V25.0549H107.443V24.3481C107.443 24.1229 107.284 23.9283 107.061 23.8815V23.8815Z" fill="white"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M138.904 16.8747L141.867 9.56554L144.873 16.8747H138.904ZM155.188 23.8813L154.807 23.8006C154.446 23.7247 154.129 23.6107 153.856 23.4585C153.495 23.2497 153.216 23.0289 153.021 22.796C152.826 22.5634 152.665 22.3043 152.538 22.0192C151.777 20.2714 150.855 18.0675 149.771 15.4072C149.009 13.5351 146.741 8.07255 145.75 5.68715C145.946 5.62463 146.088 5.45053 146.088 5.24046V4.54907H144.738H143.493H142.35C140.973 7.77912 139.717 10.7336 138.58 13.4124C137.443 16.0912 136.309 18.7657 135.177 21.4351C134.991 21.8912 134.759 22.2854 134.481 22.6179C134.203 22.9503 133.864 23.2306 133.464 23.4585C133.23 23.6013 132.91 23.7129 132.505 23.7932L131.803 23.9327C131.577 23.9774 131.415 24.1734 131.415 24.4006V25.0547H139.934V24.3747C139.934 24.1327 139.748 23.9277 139.505 23.9011C138.625 23.8053 137.981 23.6648 137.572 23.4796C137.099 23.2662 136.863 23.0074 136.863 22.7032C136.863 22.6084 136.88 22.4421 136.914 22.2044C136.948 21.9671 137.057 21.5823 137.242 21.0502C137.387 20.6418 137.559 20.1763 137.758 19.654C137.957 19.1317 138.139 18.6752 138.304 18.2857H145.475L147.248 22.4753C147.316 22.637 147.357 22.7651 147.372 22.8602C147.387 22.955 147.394 23.0407 147.394 23.1163C147.394 23.3355 147.039 23.5183 146.328 23.6652C145.799 23.7748 145.321 23.8544 144.894 23.9031C144.652 23.931 144.472 24.1347 144.472 24.3754V25.0547H155.57V24.3478C155.57 24.1226 155.411 23.928 155.188 23.8813V23.8813Z" fill="white"/>
+</svg></div>
+    <div class="product">Producto · Dólares para equipos</div>
+    <nav class="nav" aria-label="Secciones">
+      <button data-tab="discovery"><span class="n">1</span>Discovery</button>
+      <button data-tab="priorizacion"><span class="n">2</span>Priorización</button>
+      <button data-tab="roadmap"><span class="n">3</span>Roadmap</button>
+      <button data-tab="historias"><span class="n">4</span>Historias de usuario</button>
+      <button data-tab="kanban"><span class="n">5</span>Kanban</button>
+    </nav>
+    <div class="legend">
+      <div><b>Marcas</b></div>
+      <div><span class="src c">Caso</span> viene del enunciado.</div>
+      <div><span class="src f">F</span> fuente pública, secundaria.</div>
+      <div><span class="src h">H</span> hipótesis: sin fuente, o supuesto del GTM por validar.</div>
+    </div>
+  </aside>
+
+  <main>
+    <!-- 1. Discovery -->
+    <section class="tab" id="tab-discovery" aria-labelledby="h-discovery">
+      <div class="top">
+        <div>
+          <h1 id="h-discovery">Discovery</h1>
+          <p class="sub">10 entrevistas con clientes de Clara que pagan a contratistas fuera de México, Brasil y Colombia. Va en las semanas 1 a 4, antes del día 0 del piloto. <span class="src h">H</span></p>
+        </div>
+      </div>
+
+      <div class="hero">
+        <h2>Objetivo</h2>
+        <p class="sub" style="margin:0">Decidir con evidencia si vamos al piloto, con qué clientes y en qué corredor. No preguntamos "¿lo usarías?": preguntamos por la última vez que pagaron.</p>
+        <div class="kpis">
+          <div class="kpi"><b>10</b><span>entrevistas de 45 min <span class="src h">H</span></span></div>
+          <div class="kpi"><b>3</b><span>hipótesis a validar</span></div>
+          <div class="kpi"><b>2 o 3</b><span>clientes piloto a cerrar (gtm-pricing.md) <span class="src h">H</span></span></div>
+          <div class="kpi"><b>Sem. 1 a 4</b><span>antes del día 0 (gtm-pricing.md) <span class="src h">H</span></span></div>
+        </div>
+      </div>
+
+      <div class="grid g3" style="margin-top:16px">
+        <article class="hyp">
+          <div class="k">H1 · Dolor real</div>
+          <h3>Pagar a gente fuera es lento, caro y genera tickets <span class="src c">Caso</span></h3>
+          <dl>
+            <dt>Qué medimos</dt><dd>Costo por pago, días hasta que llega, mensajes de "¿dónde está mi pago?" al mes y horas de conciliación. Hoy no tenemos ese dato (gtm-pricing.md).</dd>
+            <dt>Criterio de éxito <span class="src h">H</span></dt><dd>Al menos 6 de 10 cuantifican el dolor con un dato propio y lo ponen entre sus 3 problemas principales de pagos.</dd>
+          </dl>
+        </article>
+        <article class="hyp">
+          <div class="k">H2 · Disposición a pagar</div>
+          <h3>La empresa paga 0,75% por payout, mínimo USD 1 <span class="src h">H</span></h3>
+          <dl>
+            <dt>Qué medimos</dt><dd>Cómo se compara con lo que pagan hoy, quién aprueba el gasto y cómo reaccionan al markup opcional sobre el spread.</dd>
+            <dt>Criterio de éxito <span class="src h">H</span></dt><dd>Al menos 5 de 10 lo aceptan sin pedir SaaS ni precio fijo, y al menos 2 se comprometen a un piloto con fecha.</dd>
+          </dl>
+        </article>
+        <article class="hyp">
+          <div class="k">H3 · Corredor</div>
+          <h3>Perú es el primer corredor <span class="src h">H</span></h3>
+          <dl>
+            <dt>Qué medimos</dt><dd>Personas por país en cada cliente, tipos de pago en Perú y si ya fondean en USD. En paralelo: programa de tarjeta, registro como proveedor de activos virtuales y off-ramp a soles (gtm.pdf, sección 7).</dd>
+            <dt>Criterio de éxito <span class="src h">H</span></dt><dd>Perú es el país con más personas entre los entrevistados. Si no, se elige el país con más personas (gtm.pdf).</dd>
+          </dl>
+        </article>
+      </div>
+
+      <div class="grid g2" style="margin-top:16px">
+        <div class="panel">
+          <h2>Guía de preguntas</h2>
+          <p class="hint">45 minutos. Una persona entrevista y otra toma notas. Grabamos solo con permiso. <span class="src h">H</span></p>
+          <div class="guide">
+            <section><h3>Contexto · 5 min</h3><ol>
+              <li>¿Qué haces en el equipo y qué parte de los pagos te toca?</li>
+              <li>¿En qué países tienen gente sin entidad local? ¿Cuántas personas en cada uno?</li>
+            </ol></section>
+            <section><h3>El último pago · 15 min</h3><ol>
+              <li>Cuéntame la última vez que le pagaste a alguien fuera. Paso a paso.</li>
+              <li>¿Qué tipo de pago era: contratista, reembolso, beneficio, bono o salario?</li>
+              <li>¿Cuánto costó en total y cuánto tardó en llegar?</li>
+              <li>¿Qué salió mal la última vez? ¿Qué hiciste?</li>
+            </ol></section>
+            <section><h3>Soporte y conciliación · 10 min</h3><ol>
+              <li>¿Cuántos mensajes de "¿dónde está mi pago?" reciben al mes? ¿Quién los responde?</li>
+              <li>¿Cómo concilian esos pagos? ¿Cuánto tiempo les toma?</li>
+              <li>¿Ya tienen dólares? ¿Cómo los fondean hoy?</li>
+            </ol></section>
+            <section><h3>Precio y alternativas · 10 min</h3><ol>
+              <li>¿Qué usan hoy? ¿Probaron Deel, Ontop u otro? ¿Por qué se quedaron o se fueron?</li>
+              <li>Si pagaras 0,75% por pago, con mínimo de USD 1, ¿cómo se compara con hoy?</li>
+              <li>¿Quién aprueba un gasto así? ¿Qué necesitaría ver?</li>
+            </ol></section>
+            <section><h3>Cierre · 5 min</h3><ol>
+              <li>Si hiciéramos un piloto de 90 días con 20 a 50 personas, ¿quién sería el champion?</li>
+              <li>¿A quién más deberíamos entrevistar?</li>
+            </ol></section>
+          </div>
+        </div>
+        <div class="panel">
+          <h2>Plan de entrevistas</h2>
+          <p class="hint">Candidatos sacados de datos de cuentas y de una encuesta de customer success (gtm-pricing.md). La mezcla es una hipótesis. Toca el estado para cambiarlo.</p>
+          <div class="tw"><table>
+            <thead><tr><th>#</th><th>Perfil objetivo <span class="src h">H</span></th><th>Rol</th><th>Estado</th></tr></thead>
+            <tbody id="interviews"></tbody>
+          </table></div>
+          <div class="gate" style="margin-top:14px"><b>Criterio de éxito del discovery <span class="src h">H</span></b>Pasamos a piloto si H1 y H2 se cumplen y hay 2 o 3 clientes con fecha para el primer pago. Si falla H3, cambiamos de corredor, no de producto.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Priorización -->
+    <section class="tab" id="tab-priorizacion" aria-labelledby="h-prio" hidden>
+      <div class="top">
+        <div>
+          <h1 id="h-prio">Priorización</h1>
+          <p class="sub">Qué entra al MVP del piloto, qué viene después y qué queda fuera de los 90 días. Impacto y esfuerzo son hipótesis del equipo. <span class="src h">H</span></p>
+        </div>
+        <div class="chips" role="group" aria-label="Filtrar por decisión" id="prio-filter">
+          <button class="chip" data-f="all" aria-pressed="true">Todo</button>
+          <button class="chip" data-f="mvp" aria-pressed="false">MVP</button>
+          <button class="chip" data-f="despues" aria-pressed="false">Después</button>
+          <button class="chip" data-f="fuera" aria-pressed="false">Fuera</button>
+        </div>
+      </div>
+      <div class="panel"><div class="tw"><table>
+        <thead><tr><th>Decisión</th><th>Ítem</th><th>Usuario</th><th>Impacto <span class="src h">H</span></th><th>Esfuerzo <span class="src h">H</span></th><th>Por qué</th></tr></thead>
+        <tbody id="prio"></tbody>
+      </table></div></div>
+    </section>
+
+    <!-- 3. Roadmap -->
+    <section class="tab" id="tab-roadmap" aria-labelledby="h-road" hidden>
+      <div class="top">
+        <div>
+          <h1 id="h-road">Roadmap</h1>
+          <p class="sub">Tres fases con una puerta de salida cada una. El día 0 es el primer pago real del piloto (gtm-pricing.md). Fechas relativas, sin calendario.</p>
+        </div>
+      </div>
+      <div class="phases">
+        <article class="phase">
+          <div class="when">Semanas 1 a 4</div>
+          <h2>Discovery</h2>
+          <div class="bar"><i style="width:100%"></i></div>
+          <ul class="clean">
+            <li>10 entrevistas para validar H1, H2 y H3.</li>
+            <li>Responder las 4 preguntas de Perú: personas en la base, emisión a residentes, registro y off-ramp a soles.</li>
+            <li>Definir los tipos de pago habilitados en el corredor.</li>
+            <li>Confirmar costos reales e interchange con partners, y rehacer la economía unitaria.</li>
+            <li>Cerrar 2 o 3 clientes piloto de 20 a 50 personas y medir su línea base.</li>
+          </ul>
+          <div class="gate"><b>Puerta al día 0</b>Visto bueno legal del corredor, programa de tarjeta y partner de stablecoin contratados (gtm-pricing.md).</div>
+        </article>
+        <article class="phase">
+          <div class="when">Día 0 a día 90</div>
+          <h2>Piloto</h2>
+          <div class="bar"><i style="width:35%"></i></div>
+          <ul class="clean">
+            <li><b>Día 0 a 30:</b> línea base sin cashback: activación, rechazo de KYC, primera compra, aprobación de autorizaciones y tiempo de entrega.</li>
+            <li><b>Día 30 a 90:</b> cashback por cohortes, solo con interchange confirmado, y margen por persona activa con costos reales.</li>
+            <li>Revisión semanal del tablero con los clientes piloto. <span class="src h">H</span></li>
+          </ul>
+          <div class="gate"><b>Puerta a escala</b>Parar si la activación es baja y el margen negativo a la vez, o si hay bloqueo regulatorio. Cambiar si activan pero no usan la tarjeta. Escalar con verde en empresas, activación y margen.</div>
+        </article>
+        <article class="phase">
+          <div class="when">Después del día 90</div>
+          <h2>Escala</h2>
+          <div class="bar"><i style="width:10%"></i></div>
+          <ul class="clean">
+            <li>Abrir el segundo corredor y el primer partner (gtm-pricing.md).</li>
+            <li>Partners: primero plataformas de HR y beneficios sin rieles de dinero propios.</li>
+            <li>Independientes: primero quienes dejan a su empleador y conservan la cuenta.</li>
+            <li>Ciclos de 2 semanas con demo y retro. <span class="src h">H</span></li>
+          </ul>
+          <div class="gate"><b>Señales, no decisiones</b>Partners en sandbox y recomendaciones por persona activa.</div>
+        </article>
+      </div>
+      <div class="panel">
+        <h2>Métricas del piloto</h2>
+        <p class="hint">Umbrales de gtm-pricing.md. Todos son supuestos. <span class="src h">H</span></p>
+        <div class="tw"><table>
+          <thead><tr><th>Métrica</th><th>Parar</th><th>Cambiar rumbo</th><th>Escalar</th></tr></thead>
+          <tbody>
+            <tr><td>Empresas piloto con pago recurrente (de 3)</td><td>0</td><td>1</td><td>2 o más</td></tr>
+            <tr><td>Activación: KYC aprobado y saldo recibido, a 14 días</td><td>menos de 40%</td><td>40% a 65%</td><td>más de 65%</td></tr>
+            <tr><td>Rechazo de KYC, aparte del abandono</td><td>más de 25%</td><td>10% a 25%</td><td>menos de 10%</td></tr>
+            <tr><td>Primera compra con tarjeta, a 30 días</td><td>menos de 30%</td><td>30% a 50%</td><td>más de 50%</td></tr>
+            <tr><td>Aprobación de autorizaciones con saldo suficiente</td><td>menos de 85%</td><td>85% a 95%</td><td>más de 95%</td></tr>
+            <tr><td>Entrega hasta disponible, p50 / p95</td><td>más de 24 h</td><td>hasta 24 h</td><td>menos de 15 min / 2 h</td></tr>
+            <tr><td>Tickets "¿dónde está mi pago?" por 100 pagos, contra línea base</td><td>no bajan</td><td>bajan menos de 50%</td><td>bajan más de 70%</td></tr>
+            <tr><td>Margen por persona activa, con costos reales</td><td>negativo sin camino claro</td><td>cerca de cero</td><td>positivo</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- 4. Historias -->
+    <section class="tab" id="tab-historias" aria-labelledby="h-hist" hidden>
+      <div class="top">
+        <div>
+          <h1 id="h-hist">Historias de usuario</h1>
+          <p class="sub">De alto nivel, una por tipo de usuario, con criterios de aceptación que se pueden probar en el prototipo. Montos y fees son supuestos del GTM. <span class="src h">H</span></p>
+        </div>
+      </div>
+      <div class="grid g2" id="stories"></div>
+    </section>
+
+    <!-- 5. Kanban -->
+    <section class="tab" id="tab-kanban" aria-labelledby="h-kanban" hidden>
+      <div class="top">
+        <div>
+          <h1 id="h-kanban">Kanban</h1>
+          <p class="sub">Discovery y piloto con revisión semanal. Arrastra las tarjetas entre columnas o usa las flechas. Los cambios se guardan en este navegador.</p>
+        </div>
+        <button class="btn" id="kb-reset">Restablecer tablero</button>
+      </div>
+      <div class="kb-bar">
+        <div class="kb-filters">
+          <div class="chips" role="group" aria-label="Filtrar por usuario" id="f-user"><span class="lbl">Usuario</span></div>
+          <div class="chips" role="group" aria-label="Filtrar por dueño" id="f-owner"><span class="lbl">Dueño</span></div>
+        </div>
+      </div>
+      <div class="board" id="board"></div>
+    </section>
+
+    <p class="foot-note">Fuentes: caso_clara.pdf, gtm-pricing.md, gtm.pdf y research_v2.md. Lo que no tiene fuente es hipótesis. Nombres de personas genéricos.</p>
+  </main>
+</div>
+
+<script>
+(() => {
+  const store = {
+    get(k) { try { return JSON.parse(localStorage.getItem(k)) } catch { return null } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)) } catch { /* storage not available: works without saving */ } },
+  }
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c])
+  const USERS = { empresa: 'Empresa', empleado: 'Empleado', independiente: 'Independiente', partner: 'Partner' }
+  const tag = (u) => `<span class="tag t-${u}">${USERS[u]}</span>`
+
+  // ── Tabs, with the hash so a link can open one directly ──
+  const TABS = ['discovery', 'priorizacion', 'roadmap', 'historias', 'kanban']
+  const show = (id) => {
+    if (!TABS.includes(id)) id = 'discovery'
+    TABS.forEach((t) => { document.getElementById('tab-' + t).hidden = t !== id })
+    document.querySelectorAll('.nav button').forEach((b) => b.setAttribute('aria-current', b.dataset.tab === id ? 'page' : 'false'))
+  }
+  document.querySelectorAll('.nav button').forEach((b) => b.addEventListener('click', () => { location.hash = b.dataset.tab }))
+  window.addEventListener('hashchange', () => show(location.hash.slice(1)))
+  show(location.hash.slice(1))
+
+  // ── Discovery: interview plan ──
+  const INTERVIEWS = [
+    ['Cliente con origen en México y personas en Perú', 'Finanzas'],
+    ['Cliente con origen en México y personas en Perú', 'People ops'],
+    ['Cliente con origen en México y personas en Chile o Argentina', 'Finanzas'],
+    ['Cliente con origen en Colombia y personas en Perú', 'Finanzas'],
+    ['Cliente con origen en Colombia y personas en Perú', 'People ops'],
+    ['Cliente con origen en Colombia que ya fondea en USD', 'Finanzas'],
+    ['Cliente con origen en Brasil y personas en Perú', 'Finanzas'],
+    ['Cliente con origen en Brasil y personas en Chile o Argentina', 'People ops'],
+    ['Cliente que ya usa Deel, Ontop u otro proveedor', 'Finanzas'],
+    ['Cliente que paga reembolsos a personas fuera', 'People ops'],
+  ]
+  const STATES = ['Por agendar', 'Agendada', 'Hecha']
+  const iv = store.get('plan-interviews-v1') || INTERVIEWS.map(() => 0)
+  const ivBody = document.getElementById('interviews')
+  const drawInterviews = () => {
+    ivBody.innerHTML = INTERVIEWS.map(([who, role], i) => `<tr><td class="muted">${i + 1}</td><td>${esc(who)}</td><td>${esc(role)}</td><td><button class="status s${iv[i]}" data-i="${i}" aria-label="Estado de la entrevista ${i + 1}: ${STATES[iv[i]]}">${STATES[iv[i]]}</button></td></tr>`).join('')
+  }
+  ivBody.addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-i]'); if (!b) return
+    const i = Number(b.dataset.i); iv[i] = (iv[i] + 1) % STATES.length; store.set('plan-interviews-v1', iv); drawInterviews()
+  })
+  drawInterviews()
+
+  // ── Priorización ──
+  const PRIO = [
+    ['mvp', 'Un corredor: Perú como hipótesis', ['empresa', 'empleado'], 'alto', 'medio', 'El dolor del caso está donde Clara no opera. Perú es hipótesis hasta responder 4 preguntas (gtm.pdf).'],
+    ['mvp', 'Invitación, consentimiento y KYC con reintento', ['empleado'], 'alto', 'medio', 'El caso exige KYC y AML para todos. Sin KYC aprobado no hay saldo disponible.'],
+    ['mvp', 'Ledger con pendiente, disponible, en revisión y retenido', ['empleado', 'empresa'], 'alto', 'alto', 'Fuente de verdad. El caso nombra la confusión entre pendiente y disponible.'],
+    ['mvp', 'Tarjeta virtual y primera compra', ['empleado'], 'alto', 'alto', 'El caso: la tarjeta es obligatoria y es como la mayoría usará el dinero.'],
+    ['mvp', 'Un solo flujo de fondeo y pago por lote', ['empresa'], 'alto', 'medio', 'La empresa fondea una vez y paga a todos (caso).'],
+    ['mvp', 'Cotización y retiro a banco local', ['empleado'], 'alto', 'medio', 'Lo pide el caso. Muchas personas quieren pasar a su banco.'],
+    ['mvp', 'Detalle del movimiento con tasa real y spread', ['empleado'], 'medio', 'bajo', 'Spread explícito sobre la tasa real del mercado (gtm-pricing.md).'],
+    ['mvp', 'Estado por persona y conciliación', ['empresa'], 'alto', 'medio', 'Ataca "¿dónde está mi pago?" y la conciliación manual (caso).'],
+    ['mvp', 'Reglas por país y tipo de pago', ['empresa'], 'alto', 'bajo', 'Contratistas y reembolsos sí; salario bloqueado (gtm-pricing.md).'],
+    ['despues', 'Pagos programados y recurrentes', ['empresa'], 'medio', 'bajo', 'Útil, pero no valida la tesis del piloto.'],
+    ['despues', 'Cashback por cohortes', ['empleado'], 'medio', 'medio', 'Desde el día 30 y solo con interchange confirmado (gtm-pricing.md).'],
+    ['despues', 'API para partners', ['partner'], 'alto', 'alto', 'Después de probar el producto con clientes propios (gtm-pricing.md).'],
+    ['despues', 'Beneficios y bonos con aceptación', ['empresa', 'empleado'], 'medio', 'medio', 'Requieren aceptación de la persona y revisión legal por país.'],
+    ['despues', 'Independiente con recarga y cuenta en EE. UU.', ['independiente'], 'medio', 'alto', 'Cuesta KYC y tarjeta sin ingreso; requiere banco aliado (gtm-pricing.md).'],
+    ['despues', 'Segundo corredor', ['empresa'], 'alto', 'medio', 'Se abre al escalar (gtm-pricing.md).'],
+    ['despues', 'Tarjeta física', ['empleado'], 'bajo', 'alto', 'Recorte de alcance para el piloto.'],
+    ['fuera', 'Salario en dólares', ['empresa', 'empleado'], 'alto', 'alto', 'Depende de la ley de cada país; bloqueado en la matriz (gtm.pdf, sección 6).'],
+    ['fuera', 'Ahorro en dólares dentro de LATAM', ['empleado'], 'medio', 'medio', 'El caso lo plantea como incremental, no como punto de partida.'],
+    ['fuera', 'Brasil y México como origen del primer piloto', ['empresa'], 'alto', 'alto', 'Regulación cambiaria y de activos virtuales (gtm-pricing.md, fuentes públicas).'],
+    ['fuera', 'Usuario suelto sin empleador', ['independiente'], 'bajo', 'alto', 'Una cuenta gratis sin fondeo del empleador solo genera costo (gtm-pricing.md).'],
+  ]
+  const DEC = { mvp: 'MVP', despues: 'Después', fuera: 'Fuera' }
+  const LVL = { alto: 'Alto', medio: 'Medio', bajo: 'Bajo' }
+  const prioBody = document.getElementById('prio')
+  const drawPrio = (f) => {
+    prioBody.innerHTML = PRIO.filter((r) => f === 'all' || r[0] === f).map(([d, item, users, imp, eff, why]) =>
+      `<tr><td><span class="dec ${d}">${DEC[d]}</span></td><td><b>${esc(item)}</b></td><td>${users.map(tag).join(' ')}</td><td><span class="lvl ${imp}">${LVL[imp]}</span></td><td><span class="lvl ${eff}">${LVL[eff]}</span></td><td class="muted">${esc(why)}</td></tr>`).join('')
+  }
+  document.getElementById('prio-filter').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-f]'); if (!b) return
+    document.querySelectorAll('#prio-filter .chip').forEach((c) => c.setAttribute('aria-pressed', String(c === b)))
+    drawPrio(b.dataset.f)
+  })
+  drawPrio('all')
+
+  // ── Historias ──
+  const STORIES = [
+    ['empresa', 'Como responsable de finanzas de un cliente de Clara, quiero fondear una vez y pagar a mis contratistas en Perú en un solo lote, para no gestionar bancos país por país.', [
+      'Antes de enviar veo total, fees, saldo y lo que falta.',
+      'Solo se fondea desde Add funds, por cuenta en USD o transferencia local. El saldo cambia cuando llega el depósito.',
+      'Quien no terminó KYC queda reservado y el dinero no sale de la empresa.',
+      'Un tipo de pago bloqueado por regla no se paga y muestra el motivo.',
+      'El fee por pago se ve antes de enviar: 0,75%, mínimo USD 1.',
+      'Veo el estado de cada persona y exporto la conciliación.',
+    ]],
+    ['empleado', 'Como contratista invitado por mi empresa, quiero recibir el pago en mi cuenta en dólares y usarlo con la tarjeta, para no esperar días ni perder en la conversión.', [
+      'Acepto la invitación, doy consentimiento y verifico identidad. Si la foto es ilegible, reintento sin perder el avance.',
+      'Veo por separado lo pendiente y lo disponible.',
+      'La app dice "dólares digitales", nunca cripto, con la nota legal visible.',
+      'Al tocar una compra en soles veo precio, tasa real del mercado, spread y quién lo definió, tasa aplicada y total en USD.',
+      'Si una compra se rechaza, la app explica el motivo.',
+    ]],
+    ['empleado', 'Como persona que recibe dólares, quiero convertir y retirar a mi banco local con una tasa cotizada, para usar el dinero en mi país.', [
+      'La cotización muestra tasa real del mercado y spread explícito, con la parte de la empresa.',
+      'Una cotización vencida no se honra: hay que pedir otra.',
+      'Si el banco rechaza los datos, el dinero vuelve completo al saldo.',
+      'Un retiro gratis por pago recibido; después, USD 1,50.',
+    ]],
+    ['independiente', 'Como profesional independiente sin empleador, quiero abrir una cuenta en dólares y recibir pagos de clientes en EE. UU., para cobrar sin abrir una cuenta en el exterior.', [
+      'Paso KYC como cualquier usuario.',
+      'Los países no habilitados aparecen deshabilitados, con el motivo.',
+      'Puedo recargar en moneda local o recibir con datos de cuenta en EE. UU. En producción requiere banco aliado.',
+      'Mis compras muestran el spread de la plataforma, no el de una empresa.',
+      'Queda fuera de los 90 días: entra después de los pilotos.',
+    ]],
+    ['partner', 'Como plataforma de HR o nómina, quiero ofrecer cuentas en dólares a mis usuarios por API, para no volverme cliente completo de la plataforma.', [
+      'Obtengo una llave de sandbox al instante. La llave live requiere KYB aprobado.',
+      'Puedo invitar personas, enviar pagos y consultar saldos.',
+      'Recibo webhooks firmados. El id del evento sirve como llave de idempotencia.',
+      'Mis usuarios pasan el KYC de la plataforma. El primer nivel de soporte es mío.',
+      'No pago por adelantado: comparto 30% del fee, spread e interchange, con un mínimo mensual.',
+    ]],
+  ]
+  document.getElementById('stories').innerHTML = STORIES.map(([u, as, acs], i) =>
+    `<article class="story">${tag(u)} <span class="muted small">Historia ${i + 1}</span><p class="as">${esc(as)}</p><h3>Criterios de aceptación</h3><ul>${acs.map((a) => `<li>${esc(a)}</li>`).join('')}</ul></article>`).join('')
+
+  // ── Kanban ──
+  const PEOPLE = { sara: ['Sara', 'PM', 'pm'], tomas: ['Tomás', 'Eng', 'eng'], nico: ['Nico', 'Eng', 'eng'], elena: ['Elena', 'Legal', 'legal'], raul: ['Raúl', 'Diseño', 'diseno'] }
+  const COLS = [['backlog', 'Backlog'], ['discovery', 'Discovery'], ['progreso', 'En progreso'], ['revision', 'En revisión'], ['listo', 'Listo']]
+  const CARDS = {
+    k1: ['Cashback por cohortes desde el día 30', ['empleado'], 'sara', 'Solo con interchange confirmado por el emisor.'],
+    k2: ['Abrir el segundo corredor', ['empresa'], 'sara', 'Se decide al escalar.'],
+    k3: ['Llave live de API con KYB aprobado', ['partner'], 'tomas', ''],
+    k4: ['Datos de cuenta en EE. UU. para independientes', ['independiente'], 'elena', 'Requiere banco aliado y control del origen de fondos.'],
+    k5: ['Contracargos con estado visible para la persona', ['empleado'], 'nico', 'Sigue el proceso de la red.'],
+    k6: ['Pagos programados recurrentes', ['empresa'], 'nico', ''],
+    d1: ['10 entrevistas con clientes que pagan a contratistas fuera', ['empresa'], 'sara', 'Valida H1, H2 y H3.'],
+    d2: ['¿Cuántas personas tienen los clientes en Perú?', ['empresa'], 'sara', 'Datos de clientes y customer success.'],
+    d3: ['¿El programa de tarjeta emite a residentes en Perú?', ['empleado'], 'tomas', 'Con el emisor y la red.'],
+    d4: ['¿Necesitamos registro como proveedor de activos virtuales en Perú?', ['empresa', 'empleado'], 'elena', ''],
+    d5: ['Off-ramp a soles: costo y tiempo', ['empleado'], 'nico', 'Con el partner de stablecoin.'],
+    d6: ['Interchange neto por escrito con el emisor', ['empleado'], 'sara', 'Condición para cashback.'],
+    p1: ['Ledger: pendiente, disponible, en revisión y retenido', ['empleado', 'empresa'], 'tomas', ''],
+    p2: ['Un solo flujo de Add funds', ['empresa'], 'nico', 'Cuenta en USD o transferencia local.'],
+    p3: ['Detalle del movimiento con tasa real y spread', ['empleado'], 'raul', ''],
+    p4: ['Texto de "dólares digitales" y nota 1:1 por país', ['empleado', 'independiente'], 'elena', ''],
+    r1: ['Alta con KYC y reintento de foto', ['empleado'], 'raul', ''],
+    r2: ['Matriz de tipos de pago por país', ['empresa'], 'elena', 'Fuentes públicas secundarias.'],
+    r3: ['Webhooks idempotentes y cola de revisión', ['partner'], 'tomas', ''],
+    l1: ['Prototipo de punta a punta', ['empresa', 'empleado', 'independiente', 'partner'], 'sara', ''],
+    l2: ['Diagrama de arquitectura core', ['empresa', 'empleado'], 'tomas', ''],
+    l3: ['GTM y pricing v1', ['empresa', 'partner'], 'sara', ''],
+  }
+  const DEFAULT = { backlog: ['k1', 'k2', 'k3', 'k4', 'k5', 'k6'], discovery: ['d1', 'd2', 'd3', 'd4', 'd5', 'd6'], progreso: ['p1', 'p2', 'p3', 'p4'], revision: ['r1', 'r2', 'r3'], listo: ['l1', 'l2', 'l3'] }
+  const KEY = 'plan-kanban-v1'
+  const valid = (b) => b && COLS.every(([c]) => Array.isArray(b[c])) && Object.keys(CARDS).every((id) => COLS.some(([c]) => b[c].includes(id)))
+  let board = store.get(KEY)
+  if (!valid(board)) board = structuredClone(DEFAULT)
+  let fUser = 'all', fOwner = 'all', dragId = null
+
+  const boardEl = document.getElementById('board')
+  const matches = (id) => { const [, users, owner] = CARDS[id]; return (fUser === 'all' || users.includes(fUser)) && (fOwner === 'all' || PEOPLE[owner][1] === fOwner) }
+  const colOf = (id) => COLS.findIndex(([c]) => board[c].includes(id))
+  const cardHtml = (id) => {
+    const [title, users, owner, note] = CARDS[id]
+    const [name, role, cls] = PEOPLE[owner]
+    const ci = colOf(id)
+    return `<article class="card" draggable="true" data-id="${id}"${matches(id) ? '' : ' hidden'}>
+      <div class="t">${esc(title)}</div>${note ? `<div class="note">${esc(note)}</div>` : ''}
+      <div class="tags">${users.map(tag).join('')}</div>
+      <div class="foot"><span class="owner"><span class="av ${cls}">${name[0]}</span>${esc(name)} · ${role}</span>
+      <span class="mv"><button data-mv="-1" aria-label="Mover a ${ci > 0 ? COLS[ci - 1][1] : ''}" ${ci === 0 ? 'disabled' : ''}>‹</button><button data-mv="1" aria-label="Mover a ${ci < COLS.length - 1 ? COLS[ci + 1][1] : ''}" ${ci === COLS.length - 1 ? 'disabled' : ''}>›</button></span></div>
+    </article>`
+  }
+  const drawBoard = () => {
+    boardEl.innerHTML = COLS.map(([c, label]) => {
+      const shown = board[c].filter(matches).length
+      return `<section class="col" data-col="${c}" aria-label="${label}"><header><span>${label}</span><span class="count">${shown === board[c].length ? shown : `${shown} de ${board[c].length}`}</span></header><div class="list">${board[c].map(cardHtml).join('')}</div></section>`
+    }).join('')
+  }
+  const move = (id, toCol, beforeId = null) => {
+    COLS.forEach(([c]) => { board[c] = board[c].filter((x) => x !== id) })
+    const list = board[toCol]
+    const at = beforeId ? list.indexOf(beforeId) : -1
+    if (at >= 0) list.splice(at, 0, id); else list.push(id)
+    store.set(KEY, board); drawBoard()
+  }
+  boardEl.addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-mv]'); if (!b || b.disabled) return
+    const id = b.closest('.card').dataset.id
+    const to = colOf(id) + Number(b.dataset.mv)
+    if (to >= 0 && to < COLS.length) move(id, COLS[to][0])
+    const again = boardEl.querySelector(`.card[data-id="${id}"] button[data-mv="${b.dataset.mv}"]`)
+    if (again && !again.disabled) again.focus()
+  })
+  boardEl.addEventListener('dragstart', (e) => {
+    const card = e.target.closest('.card'); if (!card) return
+    dragId = card.dataset.id; card.classList.add('dragging')
+    e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', dragId)
+  })
+  boardEl.addEventListener('dragend', () => { dragId = null; boardEl.querySelectorAll('.dragging').forEach((x) => x.classList.remove('dragging')); boardEl.querySelectorAll('.over').forEach((x) => x.classList.remove('over')) })
+  const beforeCard = (col, y) => {
+    for (const el of col.querySelectorAll('.card:not([hidden]):not(.dragging)')) { const r = el.getBoundingClientRect(); if (y < r.top + r.height / 2) return el.dataset.id }
+    return null
+  }
+  boardEl.addEventListener('dragover', (e) => {
+    const col = e.target.closest('.col'); if (!col) return
+    e.preventDefault(); e.dataTransfer.dropEffect = 'move'
+    boardEl.querySelectorAll('.over').forEach((x) => x !== col && x.classList.remove('over')); col.classList.add('over')
+  })
+  boardEl.addEventListener('dragleave', (e) => { const col = e.target.closest('.col'); if (col && !col.contains(e.relatedTarget)) col.classList.remove('over') })
+  boardEl.addEventListener('drop', (e) => {
+    const col = e.target.closest('.col'); if (!col) return
+    e.preventDefault()
+    const id = dragId || e.dataTransfer.getData('text/plain'); if (!CARDS[id]) return
+    move(id, col.dataset.col, beforeCard(col, e.clientY))
+  })
+
+  const chipRow = (el, items, get, set) => {
+    el.insertAdjacentHTML('beforeend', items.map(([v, l]) => `<button class="chip" data-v="${v}" aria-pressed="${v === get()}">${l}</button>`).join(''))
+    el.addEventListener('click', (e) => {
+      const b = e.target.closest('button[data-v]'); if (!b) return
+      set(b.dataset.v); el.querySelectorAll('.chip').forEach((c) => c.setAttribute('aria-pressed', String(c === b))); drawBoard()
+    })
+  }
+  chipRow(document.getElementById('f-user'), [['all', 'Todos'], ...Object.entries(USERS)], () => fUser, (v) => { fUser = v })
+  chipRow(document.getElementById('f-owner'), [['all', 'Todos'], ['PM', 'PM'], ['Eng', 'Eng'], ['Legal', 'Legal'], ['Diseño', 'Diseño']], () => fOwner, (v) => { fOwner = v })
+  document.getElementById('kb-reset').addEventListener('click', () => { board = structuredClone(DEFAULT); store.set(KEY, board); drawBoard() })
+  drawBoard()
+})()
+</script>
+</body>
+</html>
